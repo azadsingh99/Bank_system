@@ -50,9 +50,16 @@ void Account :: setBalance(float bal)
     balance = bal;
 }
 
+void Account :: display()
+{
+    cout << "First Name      : " << firstname << endl;
+    cout << "Last  Name      : " << lastname << endl;
+    cout << "Account Number  : " << AccountNumber << endl;
+    cout << "Balance         : " << balance << endl;
+    cout << "-------------------------------------------" << endl;
+}
 int main()
 {
-    Account *acc;
     int n;
     string fname, lname;
     float bal;
@@ -60,9 +67,10 @@ int main()
     cout << "Enter the total account to create: ";
     cin >> n;
 
+    Account *acc[n];
     for(int i=0; i<n; i++)
     {
-        cout << "Enter the " << i+1 << "Account To Create " << endl;
+        cout << "Enter the " << i+1 << " Account To Create " << endl;
         cout << "Enter First Name : ";
         cin >> fname;
         cout << "Enter Last Name : ";
@@ -70,7 +78,12 @@ int main()
         cout << "Enter Initial Balance : ";
         cin >> bal;
 
-        acc = new Account(fname, lname, bal);
+        acc[i] = new Account(fname, lname, bal);
+    }
+
+    for(int i=0; i<n; i++)
+    {
+        acc[i]->display();
     }
 
     return 0;
