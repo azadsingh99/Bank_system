@@ -9,6 +9,9 @@ conn = psycopg2.connect(dbname=DB_NAME, user=DB_USER, password=DB_PASS, host=DB_
 cur = conn.cursor()
 
 def open_account():
+    print("Enter the Account Number : ", end='')
+    acc = input()
+    
     print("Enter First Name : ", end='')
     f_name = input()
     
@@ -16,20 +19,40 @@ def open_account():
     l_name = input()
     
     print("Enter the Minimum Balance : ", end='')
-    bal = int(input())
+    bal = input()
     
-    cur.execute("INSERT INTO bank (firstname, lastname, balance) VALUES(%s, %s, %s);", (f_name, l_name, bal))
-    conn.commit()
-    print("\tCONGRATULATIONS !!!!!!! ACCOUNT IS CREATED")
+    try:
+        cur.execute("INSERT INTO bank (account, firstname, lastname, balance) VALUES(%s, %s, %s, %s);", (acc, f_name, l_name, bal))
+        conn.commit()
+        print("\tCONGRATULATIONS !!!!!!! ACCOUNT IS CREATED")
     
-
+    except Exception as e:
+        print("************WARNING************")
+        print("\tAccount Number is Already Taken!!!!!!!", e)
+        conn.rollback()
+    
 def balance_enquiry():
     
     print("Enter the Account Number : ", end='')
     acc = (input())
-    
-    cur.execute("SELECT * FROM bank where account = (%s);", (acc))
-    print(cur.fetchall())
+   
+    try: 
+        cur.execute("SELECT * FROM bank where account = ('%s')" % (acc))
+        
+        print(acc)
+        record = cur.fetchall()
+        
+        print("************ ACCOUNT HOLDERS DETAIL ************")
+        for row in record:
+            print("\n")
+            print('Account Number     : ', row[0])
+            print('First Name         : ', row[1])
+            print('Last Name          : ', row[2])
+            print('Balance            : ', row[3])
+
+    except Exception as e:
+        print("Error : ", e)
+    print("\n")
 
 def deposit_money():
     print("Enter the Account Number : ", end='')
@@ -38,8 +61,8 @@ def deposit_money():
     print("Enter the Balance to Deposit : ", end='')
     bal = int(input())
     
-    cur.execute("UPDATE bank SET balance =  balance + (%s) WHERE account = (%s);", (bal, acc_num))
-    cur.commit()
+    cur.execute("UPDATE bank SET balance =  balance + (%s) WHERE account = (%s);" % (bal, acc_num))
+    conn.commit()
 
 def withdraw_money():
     print("Enter the Account Number : ", end='')
@@ -48,31 +71,36 @@ def withdraw_money():
     print("Enter the Ammount To Withdraw : ", end='')
     bal = int(input())
     
-    cur.execute("SELECT * FROM bank where account = (%s);", (acc_num))
+    cur.execute("SELECT * FROM bank where account = (%s);" % (acc_num))
     record = cur.fetchall()
     
+    print("\n")
     for row in record:
         balance = row[3]
     
     if(bal > balance):
+        print("************WARNING************")
         print("Insufficient Balance !!!!!!")
         print("Total Balance in Account ", balance) 
     
     else:
         cur.execute("UPDATE bank SET balance = balance - (%s) WHERE account = (%s)", (bal, acc_num))
 
+    print("\n")
 def delete_account():
     print("Enter the Account Number : ", end='')
     acc = input();
     
-    cur.execute("DELETE FROM bank WHERE account = (%s);", (acc))
+    cur.execute("DELETE FROM bank WHERE account = (%s);" % (acc))
     conn.commit()
     
 def display_all_records():
     cur.execute("SELECT * FROM bank")
     records = cur.fetchall()
     
+    print("************ALL ACCOUNT HOLDERS DETAIL************")
     for row in records:
+        print("\n")
         print("Account Number   : ", row[0])
         print("First Name       : ", row[1])
         print("Last Name        : ", row[2])
@@ -101,7 +129,7 @@ print("\t2. Insert Into Same Table")
 option = int(input())
 
 if option == 1:  
-    cur.execute("CREATE TABLE bank (account serial PRIMARY KEY, firstname varchar(20), lastname varchar(20), balance int);")
+    cur.execute("CREATE TABLE bank (account int PRIMARY KEY, firstname varchar(20), lastname varchar(20), balance int);")
     conn.commit()
 
 
