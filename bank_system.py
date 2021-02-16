@@ -19,6 +19,7 @@ def open_account():
     bal = int(input())
     
     cur.execute("INSERT INTO bank (firstname, lastname, balance) VALUES(%s, %s, %s);", (f_name, l_name, bal))
+    conn.commit()
     print("\tCONGRATULATIONS !!!!!!! ACCOUNT IS CREATED")
     
 
@@ -44,12 +45,21 @@ def withdraw_money():
     print("Enter the Account Number : ", end='')
     acc_num = (input())
     
-    #print("Enter the Ammount To Withdraw : ", end='')
-    #bal = int(input())
+    print("Enter the Ammount To Withdraw : ", end='')
+    bal = int(input())
     
-    ammount = cur.execute("SELECT (balance) from bank where account = (%s);", (acc_num))
-    print(ammount)
-    #cur.execute("UPDATE bank SET balance = balance - (%s) WHERE account = (%s)", (bal, acc_num))
+    cur.execute("SELECT * FROM bank where account = (%s);", (acc_num))
+    record = cur.fetchall()
+    
+    for row in record:
+        balance = row[3]
+    
+    if(bal > balance):
+        print("Insufficient Balance !!!!!!")
+        print("Total Balance in Account ", balance) 
+    
+    else:
+        cur.execute("UPDATE bank SET balance = balance - (%s) WHERE account = (%s)", (bal, acc_num))
 
 def display_all_records():
     cur.execute("SELECT * FROM bank")
