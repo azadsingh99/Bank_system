@@ -61,6 +61,13 @@ def withdraw_money():
     else:
         cur.execute("UPDATE bank SET balance = balance - (%s) WHERE account = (%s)", (bal, acc_num))
 
+def delete_account():
+    print("Enter the Account Number : ", end='')
+    acc = input();
+    
+    cur.execute("DELETE FROM bank WHERE account = (%s);", (acc))
+    conn.commit()
+    
 def display_all_records():
     cur.execute("SELECT * FROM bank")
     records = cur.fetchall()
@@ -81,6 +88,8 @@ def option_chooser(option):
         deposit_money()
     elif(option == 4):
         withdraw_money()
+    elif(option == 5):
+        delete_account();
     elif(option == 6):
         display_all_records()
     else:
