@@ -23,25 +23,56 @@ def open_account():
     
 
 def balance_enquiry():
-    cur.execute("SELECT * FROM bank;")
+    
+    print("Enter the Account Number : ", end='')
+    acc = (input())
+    
+    cur.execute("SELECT * FROM bank where account = (%s);", (acc))
     print(cur.fetchall())
 
-def deposit():
+def deposit_money():
     print("Enter the Account Number : ", end='')
-    acc_num = int(input())
+    acc_num = (input())
     
     print("Enter the Balance to Deposit : ", end='')
     bal = int(input())
     
     cur.execute("UPDATE bank SET balance =  balance + (%s) WHERE account = (%s);", (bal, acc_num))
+    cur.commit()
+
+def withdraw_money():
+    print("Enter the Account Number : ", end='')
+    acc_num = (input())
     
+    #print("Enter the Ammount To Withdraw : ", end='')
+    #bal = int(input())
+    
+    ammount = cur.execute("SELECT (balance) from bank where account = (%s);", (acc_num))
+    print(ammount)
+    #cur.execute("UPDATE bank SET balance = balance - (%s) WHERE account = (%s)", (bal, acc_num))
+
+def display_all_records():
+    cur.execute("SELECT * FROM bank")
+    records = cur.fetchall()
+    
+    for row in records:
+        print("Account Number   : ", row[0])
+        print("First Name       : ", row[1])
+        print("Last Name        : ", row[2])
+        print("Balance          : ", row[3])
+        print("\n")
+        
 def option_chooser(option):
     if(option == 1):
         open_account()
     elif(option == 2):
         balance_enquiry()
     elif(option == 3):
-        deposit()
+        deposit_money()
+    elif(option == 4):
+        withdraw_money()
+    elif(option == 6):
+        display_all_records()
     else:
         print("Option Not Available")
         
