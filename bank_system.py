@@ -26,11 +26,22 @@ def balance_enquiry():
     cur.execute("SELECT * FROM bank;")
     print(cur.fetchall())
 
+def deposit():
+    print("Enter the Account Number : ", end='')
+    acc_num = int(input())
+    
+    print("Enter the Balance to Deposit : ", end='')
+    bal = int(input())
+    
+    cur.execute("UPDATE bank SET balance =  balance + (%s) WHERE account = (%s);", (bal, acc_num))
+    
 def option_chooser(option):
     if(option == 1):
-        open_account();
+        open_account()
     elif(option == 2):
         balance_enquiry()
+    elif(option == 3):
+        deposit()
     else:
         print("Option Not Available")
         
