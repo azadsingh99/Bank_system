@@ -71,29 +71,37 @@ def withdraw_money():
     print("Enter the Ammount To Withdraw : ", end='')
     bal = int(input())
     
-    cur.execute("SELECT * FROM bank where account = (%s);" % (acc_num))
-    record = cur.fetchall()
-    
-    print("\n")
-    for row in record:
-        balance = row[3]
-    
-    if(bal > balance):
-        print("************WARNING************")
-        print("Insufficient Balance !!!!!!")
-        print("Total Balance in Account ", balance) 
-    
-    else:
-        cur.execute("UPDATE bank SET balance = balance - (%s) WHERE account = (%s)", (bal, acc_num))
+    try:
+        cur.execute("SELECT * FROM bank where account = (%s);" % (acc_num))
+        record = cur.fetchall()
+        
+        print("\n")
+        for row in record:
+            balance = row[3]
+        
+        if(bal > balance):
+            print("************WARNING************")
+            print("Insufficient Balance !!!!!!")
+            print("Total Balance in Account ", balance) 
+        
+        else:
+            cur.execute("UPDATE bank SET balance = balance - (%s) WHERE account = (%s)" % (bal, acc_num))
 
+    except Exception:
+        print("OOPS!!!!!! , Account is Not Present")
     print("\n")
 def delete_account():
     print("Enter the Account Number : ", end='')
     acc = input();
     
-    cur.execute("DELETE FROM bank WHERE account = (%s);" % (acc))
-    conn.commit()
+    try:
+        cur.execute("DELETE FROM bank WHERE account = (%s);" % (acc))
+        conn.commit()
+        print("*********ACCOUNT IS CLOSED SUCCESSFULLY********")
     
+    except Exception:
+        print("OOPS !!!! , Account is Not Present")
+        
 def display_all_records():
     cur.execute("SELECT * FROM bank")
     records = cur.fetchall()
@@ -105,7 +113,6 @@ def display_all_records():
         print("First Name       : ", row[1])
         print("Last Name        : ", row[2])
         print("Balance          : ", row[3])
-        print("\n")
         
 def option_chooser(option):
     if(option == 1):
