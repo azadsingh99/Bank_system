@@ -19,7 +19,7 @@ def open_account():
     bal = int(input())
     
     cur.execute("INSERT INTO bank (firstname, lastname, balance) VALUES(%s, %s, %s);", (f_name, l_name, bal))
-    
+    print("\tCONGRATULATIONS !!!!!!! ACCOUNT IS CREATED")
     
 
 def balance_enquiry():
@@ -27,15 +27,21 @@ def balance_enquiry():
     print(cur.fetchall())
 
 def option_chooser(option):
-    switcher={
-        1: open_account(),
-        2: balance_enquiry(),
-        7: 0,
-    }
-    return switcher.get(option, "Option Not Available")
-    
-    
-cur.execute("CREATE TABLE bank (account serial PRIMARY KEY, firstname varchar(20), lastname varchar(20), balance int);")
+    if(option == 1):
+        open_account();
+    elif(option == 2):
+        balance_enquiry()
+    else:
+        print("Option Not Available")
+        
+
+print("\t1. To Create New Table")
+print("\t2. Insert Into Same Table")
+option = int(input())
+
+if option == 1:  
+    cur.execute("CREATE TABLE bank (account serial PRIMARY KEY, firstname varchar(20), lastname varchar(20), balance int);")
+    conn.commit()
 
 
 while(1):
@@ -52,7 +58,8 @@ while(1):
     if(option == 7):
         print("Thanks !!!!!!!!")
         break
-    result = option_chooser(option)        
+    
+    option_chooser(option)      
 
 conn.commit()
 cur.close()
