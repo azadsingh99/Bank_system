@@ -1,7 +1,7 @@
 DB_HOST = "localhost"
 DB_NAME = "mydb"
-DB_USER = "azad"
-DB_PASS = "azad@#123"
+DB_USER = "****"
+DB_PASS = "*******"
 
 import psycopg2
 
